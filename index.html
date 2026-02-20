@@ -14,29 +14,29 @@
     }
 
     .container {
-      padding: 30px 20px;
+      padding: 40px 20px;
     }
 
     .logo {
       width: 200px;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
 
     h2 {
-      margin-bottom: 20px;
+      margin-bottom: 30px;
       font-weight: 500;
     }
 
     button {
       background: linear-gradient(90deg, #FFD700, #FFB300);
       border: none;
-      padding: 15px 25px;
-      font-size: 16px;
-      border-radius: 30px;
+      padding: 18px 30px;
+      font-size: 18px;
+      border-radius: 40px;
       cursor: pointer;
       font-weight: bold;
       color: #0B3C8C;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
       transition: 0.3s;
     }
 
@@ -44,25 +44,9 @@
       transform: scale(1.05);
     }
 
-    .card {
-      background: white;
-      color: #0B3C8C;
-      margin: 15px auto;
-      padding: 15px;
-      border-radius: 15px;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-
-    .distancia {
-      color: #E53935;
-      font-weight: bold;
-    }
-
-    .footer {
-      margin-top: 40px;
-      font-size: 12px;
+    .info {
+      margin-top: 20px;
+      font-size: 14px;
       opacity: 0.8;
     }
   </style>
@@ -72,86 +56,41 @@
 
 <div class="container">
 
-  <!-- Coloca aqui o teu logo Nubai -->
-  <img src="logo.png" class="logo">
+  <img src="LINK_DO_TEU_LOGO_AQUI" class="logo">
 
-  <h2>Restaurantes perto de si</h2>
+  <h2>Encontrar Restaurantes Perto de Si</h2>
 
-  <button onclick="buscar()">Encontrar Restaurantes</button>
+  <button onclick="abrirGoogle()">Procurar Restaurantes</button>
 
-  <div id="lista"></div>
-
-  <div class="footer">
-    Nubai © 2026
+  <div class="info">
+    Será pedida a sua localização para mostrar restaurantes num raio aproximado de 4 km.
   </div>
 
 </div>
 
 <script>
 
-const restaurantes = [
-  {nome: "Pizza Lisboa", lat: 38.7223, lon: -9.1393},
-  {nome: "Burger Centro", lat: 38.7200, lon: -9.1400},
-  {nome: "Green Food", lat: 38.7250, lon: -9.1350}
-];
-
-function distancia(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const dLat = (lat2-lat1) * Math.PI/180;
-  const dLon = (lon2-lon1) * Math.PI/180;
-
-  const a =
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1*Math.PI/180) *
-    Math.cos(lat2*Math.PI/180) *
-    Math.sin(dLon/2) *
-    Math.sin(dLon/2);
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return R * c;
-}
-
-function buscar() {
+function abrirGoogle() {
 
   if (!navigator.geolocation) {
     alert("Geolocalização não suportada.");
     return;
   }
 
-  navigator.geolocation.getCurrentPosition(
-    function(pos) {
+  navigator.geolocation.getCurrentPosition(function(position) {
 
-      const userLat = pos.coords.latitude;
-      const userLon = pos.coords.longitude;
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
 
-      let resultado = "";
+    // Zoom 15 ≈ cerca de 4 km
+    const url = `https://www.google.com/maps/search/restaurantes/@${lat},${lon},15z`;
 
-      restaurantes.forEach(r => {
-        const d = distancia(userLat, userLon, r.lat, r.lon);
+    window.open(url, "_blank");
 
-        if (d <= 4) {  // Alterado de 2 para 4 km
-          resultado += `
-            <div class="card">
-              <h3>${r.nome}</h3>
-              <p class="distancia">${d.toFixed(2)} km de si</p>
-            </div>
-          `;
-        }
-      });
+  }, function() {
+    alert("Precisa permitir a localização.");
+  });
 
-      if (resultado === "") {
-        resultado = `<div class="card">
-                       Nenhum restaurante encontrado num raio de 4km.
-                     </div>`;
-      }
-
-      document.getElementById("lista").innerHTML = resultado;
-
-    },
-    function() {
-      alert("Precisa permitir a localização para funcionar.");
-    }
-  );
 }
 
 </script>
