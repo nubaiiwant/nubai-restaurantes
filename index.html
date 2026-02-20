@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Nubai - Restaurantes perto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0B3C8C, #1565C0);
+      color: white;
+      text-align: center;
+    }
+
+    .container {
+      padding: 30px 20px;
+    }
+
+    .logo {
+      width: 200px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    button {
+      background: linear-gradient(90deg, #FFD700, #FFB300);
+      border: none;
+      padding: 15px 25px;
+      font-size: 16px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #0B3C8C;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    .card {
+      background: white;
+      color: #0B3C8C;
+      margin: 15px auto;
+      padding: 15px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .distancia {
+      color: #E53935;
+      font-weight: bold;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 12px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- Coloca aqui o teu logo Nubai -->
+  <img src="LINK_DO_TEU_LOGO_AQUI" class="logo">
+
+  <h2>Restaurantes perto de si</h2>
+
+  <button onclick="buscar()">Encontrar Restaurantes</button>
+
+  <div id="lista"></div>
+
+  <div class="footer">
+    Nubai © 2026
+  </div>
+
+</div>
+
+<script>
+
+const restaurantes = [
+  {nome: "Pizza Lisboa", lat: 38.7223, lon: -9.1393},
+  {nome: "Burger Centro", lat: 38.7200, lon: -9.1400},
+  {nome: "Green Food", lat: 38.7250, lon: -9.1350}
+];
+
+function distancia(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2-lat1) * Math.PI/180;
+  const dLon = (lon2-lon1) * Math.PI/180;
+
+  const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1*Math.PI/180) *
+    Math.cos(lat2*Math.PI/180) *
+    Math.sin(dLon/2) *
+    Math.sin(dLon/2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+function buscar() {
+
+  if (!navigator.geolocation) {
+    alert("Geolocalização não suportada.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+
+      const userLat = pos.coords.latitude;
+      const userLon = pos.coords.longitude;
+
+      let resultado = "";
+
+      restaurantes.forEach(r => {
+        const d = distancia(userLat, userLon, r.lat, r.lon);
+
+        if (d <= 2) {
+          resultado += `
+            <div class="card">
+              <h3>${r.nome}</h3>
+              <p class="distancia">${d.toFixed(2)} km de si</p>
+            </div>
+          `;
+        }
+      });
+
+      if (resultado === "") {
+        resultado = `<div class="card">
+                       Nenhum restaurante encontrado num raio de 2km.
+                     </div>`;
+      }
+
+      document.getElementById("lista").innerHTML = resultado;
+
+    },
+    function() {
+      alert("Precisa permitir a localização para funcionar.");
+    }
+  );
+}
+
+</script>
+
+</body>
+</html>
