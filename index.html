@@ -18,7 +18,7 @@
     }
 
     .logo {
-      width: 200px;
+      width: 180px;
       margin-bottom: 30px;
     }
 
@@ -38,16 +38,43 @@
       color: #0B3C8C;
       box-shadow: 0 4px 20px rgba(0,0,0,0.3);
       transition: 0.3s;
+      margin: 10px;
     }
 
     button:hover {
       transform: scale(1.05);
     }
 
+    .loading {
+      margin-top: 25px;
+      display: none;
+    }
+
+    .spinner {
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top: 4px solid #FFD700;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     .info {
-      margin-top: 20px;
       font-size: 14px;
       opacity: 0.8;
+      margin-top: 20px;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 12px;
+      opacity: 0.7;
     }
   </style>
 </head>
@@ -58,12 +85,25 @@
 
   <img src="LINK_DO_TEU_LOGO_AQUI" class="logo">
 
-  <h2>Encontrar Restaurantes Perto de Si</h2>
+  <h2>Restaurantes num raio de 2 km</h2>
 
-  <button onclick="abrirGoogle()">Procurar Restaurantes</button>
+  <button onclick="abrirGoogle()">Encontrar Restaurantes</button>
+
+  <br>
+
+  <button onclick="voltar()">Voltar à Nubai</button>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    A procurar restaurantes perto de si...
+  </div>
 
   <div class="info">
-    Será pedida a sua localização para mostrar restaurantes num raio aproximado de 4 km.
+    Será pedida a sua localização para mostrar restaurantes reais próximos.
+  </div>
+
+  <div class="footer">
+    Nubai © 2026
   </div>
 
 </div>
@@ -77,20 +117,29 @@ function abrirGoogle() {
     return;
   }
 
+  document.getElementById("loading").style.display = "block";
+
   navigator.geolocation.getCurrentPosition(function(position) {
 
     const lat = position.coords.latitude;
     const lon = position.coords.longitude;
 
-    // Zoom 15 ≈ cerca de 4 km
-    const url = `https://www.google.com/maps/search/restaurantes/@${lat},${lon},15z`;
+    // Zoom 16 ≈ 2 km
+    const url = `https://www.google.com/maps/search/restaurantes/@${lat},${lon},16z`;
 
-    window.open(url, "_blank");
+    setTimeout(() => {
+      window.open(url, "_blank");
+    }, 1500);
 
   }, function() {
     alert("Precisa permitir a localização.");
+    document.getElementById("loading").style.display = "none";
   });
 
+}
+
+function voltar() {
+  window.location.href = "LINK_DO_TEU_SITE_CANVA_AQUI";
 }
 
 </script>
