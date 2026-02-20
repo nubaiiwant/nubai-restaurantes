@@ -129,7 +129,7 @@ function buscar() {
       restaurantes.forEach(r => {
         const d = distancia(userLat, userLon, r.lat, r.lon);
 
-        if (d <= 2) {
+        if (d <= 4) {  // Alterado de 2 para 4 km
           resultado += `
             <div class="card">
               <h3>${r.nome}</h3>
@@ -141,7 +141,7 @@ function buscar() {
 
       if (resultado === "") {
         resultado = `<div class="card">
-                       Nenhum restaurante encontrado num raio de 2km.
+                       Nenhum restaurante encontrado num raio de 4km.
                      </div>`;
       }
 
